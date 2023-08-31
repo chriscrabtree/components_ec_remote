@@ -1,3 +1,1 @@
 - Bruce Tate
-- TomSayerCode
-- Kyle Neal
