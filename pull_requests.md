@@ -1,3 +1,4 @@
 - Bruce Tate
 - TomSayerCode
 - Kyle Neal
+- Logan Crabtree
