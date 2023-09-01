@@ -3,3 +3,4 @@
 - Kyle Neal
 - Logan Crabtree
 - Chris Crabtree
+- Frank Solano
