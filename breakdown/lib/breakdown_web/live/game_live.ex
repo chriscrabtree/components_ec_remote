@@ -16,14 +16,24 @@ defmodule BreakdownWeb.GameLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.preview title={@title} game={@game} />
+    <.grid>
+      <.word :for={letters <- @game.scores |> Enum.reverse()} letters={letters} />
+    </.grid>
+
+    <.preview game={@game} />
     """
   end
 
   def reset_game(socket) do
     socket
-    |> assign(:game, Game.Core.new())
+    |> assign(
+      :game,
+      Game.Core.new("GUESS") |> Game.Core.guess("DRESS") |> Game.Core.guess("GUESS")
+    )
   end
+
+  attr :title, :string, default: "Welcome"
+  attr :game, Game.Core, required: true
 
   def preview(assigns) do
     ~H"""
@@ -31,8 +41,45 @@ defmodule BreakdownWeb.GameLive do
       <%= @title %>
     </h2>
     <pre>
-       <%= inspect(@game) %>
+       <%= inspect(@game, pretty: true) %>
     </pre>
     """
+  end
+
+  attr :letters, :list, required: true
+
+  def word(assigns) do
+    ~H"""
+    <.letter :for={{letter, color} <- @letters} letter={letter} color={color} />
+    """
+  end
+
+  slot :inner_block, required: true
+
+  def grid(assigns) do
+    ~H"""
+    <div class="grid grid-cols-5 gap-4 text-center font-bold mb-10">
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  attr :letter, :string, required: true
+  attr :color, :atom, required: true
+
+  def letter(assigns) do
+    ~H"""
+    <div class={["text-white pt-2 pb-2 rounded", color_class(@color)]}>
+      <%= @letter %>
+    </div>
+    """
+  end
+
+  defp color_class(color) do
+    case color do
+      :gray -> "bg-gray-500"
+      :yellow -> "bg-yellow-500"
+      :green -> "bg-green-600"
+    end
   end
 end
