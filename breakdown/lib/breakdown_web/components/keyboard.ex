@@ -5,5 +5,13 @@ defmodule BreakdownWeb.Components.Keyboard do
   # should have a render function
   # call with live_render...
   # set up state with `def update(assigns, socket)` instead of `def mount(params, session, socket)`
-  
+  attr :id, :string
+
+  def render(assigns) do
+    ~H"""
+    <div id={@id}>
+      Keyboard
+    </div>
+    """
+  end
 end
