@@ -2,6 +2,7 @@ defmodule BreakdownWeb.GameLive do
   @moduledoc false
 
   alias Breakdown.Game
+  alias BreakdownWeb.Components.Keyboard
 
   use BreakdownWeb, :live_view
 
@@ -19,6 +20,8 @@ defmodule BreakdownWeb.GameLive do
     <.grid>
       <.word :for={letters <- @game.scores |> Enum.reverse()} letters={letters} />
     </.grid>
+
+    <.live_component module={Keyboard} id="keyboard" />
 
     <.preview game={@game} />
     """
