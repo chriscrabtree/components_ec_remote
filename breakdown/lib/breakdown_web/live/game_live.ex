@@ -23,8 +23,18 @@ defmodule BreakdownWeb.GameLive do
       <.word :for={letters <- @game.scores |> Enum.reverse()} letters={letters} />
     </.grid>
 
-    <.live_component module={Keyboard} id="keyboard" keyboard_letters={@game.keyboard} />
+    <.live_component
+      module={Keyboard}
+      id="keyboard"
+      keyboard_letters={Game.Core.show(@game)[:keyboard]}
+    />
 
+    <.show_guess guess={@guess} />
+
+    <div class="flex justify-around">
+      <.delete />
+      <.enter />
+    </div>
     <.preview game={@game} guess={@guess} />
     """
   end
@@ -38,22 +48,18 @@ defmodule BreakdownWeb.GameLive do
     {:noreply, assign(socket, :guess, guess)}
   end
 
-  def reset_game(socket) do
-    socket
-    |> assign(
-      :game,
-      Game.Core.new("guess")
-      |> Game.Core.guess("dress")
-      |> Game.Core.guess("spend")
-      |> Game.Core.guess("sting")
-      # |> Game.Core.guess("GUESS")
-      |> Game.Core.show()
-    )
+  @impl true
+  def handle_event("back", _params, socket) do
+    guess =
+      socket.assigns.guess
+      |> Guess.back()
+
+    {:noreply, assign(socket, :guess, guess)}
   end
 
-  def reset_guess(socket) do
-    socket
-    |> assign(:guess, Game.Guess.new())
+  @impl true
+  def handle_event("enter", _params, socket) do
+    {:noreply, enter_guess(socket)}
   end
 
   attr :title, :string, default: "Welcome"
@@ -66,7 +72,7 @@ defmodule BreakdownWeb.GameLive do
       <%= @title %>
     </h2>
     <pre>
-      <%= inspect(@guess, pretty: true) %>
+      <%= inspect(@game, pretty: true) %>
     </pre>
     """
   end
@@ -98,6 +104,61 @@ defmodule BreakdownWeb.GameLive do
       <%= @letter %>
     </div>
     """
+  end
+
+  def delete(assigns) do
+    ~H"""
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-10"
+      phx-click="back"
+    >
+      Back
+    </button>
+    """
+  end
+
+  def enter(assigns) do
+    ~H"""
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-10"
+      phx-click="enter"
+    >
+      Enter
+    </button>
+    """
+  end
+
+  attr :guess, :any
+
+  def show_guess(assigns) do
+    ~H"""
+    <p><%= Guess.show(@guess) %></p>
+    """
+  end
+
+  defp reset_game(socket) do
+    socket
+    |> assign(
+      :game,
+      Game.new()
+    )
+  end
+
+  defp reset_guess(socket) do
+    socket
+    |> assign(:guess, Game.Guess.new())
+  end
+
+  defp enter_guess(socket) do
+    guess = Guess.show(socket.assigns.guess)
+
+    game =
+      socket.assigns.game
+      |> Game.Core.guess(guess)
+
+    socket
+    |> assign(:game, game)
+    |> reset_guess()
   end
 
   defp color_class(color) do
