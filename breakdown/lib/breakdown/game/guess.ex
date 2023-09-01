@@ -7,13 +7,20 @@ defmodule Breakdown.Game.Guess do
 
   def move(guess = %__MODULE__{letters: letters}, letter)
       when is_list(letters) and is_binary(letter) do
-    letters =
-      letters ++ [letter]
-
-    Map.put(guess, :letters, letters)
+    Map.put(guess, :letters, [letter | letters])
   end
 
   def show(_guess = %__MODULE__{letters: letters}) when is_list(letters) do
-    Enum.join(letters, "")
+    letters
+    |> Enum.reverse()
+    |> Enum.join("")
+  end
+
+  def back(guess = %__MODULE__{letters: []}) do
+    guess
+  end
+
+  def back(guess = %__MODULE__{letters: [_letter | letters]}) do
+    %{guess | letters: letters}
   end
 end
