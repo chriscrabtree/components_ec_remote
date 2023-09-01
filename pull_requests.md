@@ -1,1 +1,6 @@
-- Lucas Stellet
+- Bruce Tate
+- TomSayerCode
+- Kyle Neal
+- Logan Crabtree
+- Chris Crabtree
+- Frank Solano
