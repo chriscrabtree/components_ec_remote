@@ -29,7 +29,7 @@ defmodule BreakdownWeb.GameLive do
       keyboard_letters={Game.Core.show(@game)[:keyboard]}
     />
 
-    <.show_guess guess={@guess} />
+    <.show_guess letters={fill_five_chars(@guess.letters)} />
 
     <div class="flex justify-around">
       <.delete />
@@ -128,11 +128,16 @@ defmodule BreakdownWeb.GameLive do
     """
   end
 
-  attr :guess, :any
-
+  attr :letters, :list
   def show_guess(assigns) do
     ~H"""
-    <p><%= Guess.show(@guess) %></p>
+    <div class="flex flex-row mt-10 gap-2 w-full justify-center font-bold">
+      <%= for letter <- @letters do %>
+      <div class="basis-[9%] min-h-[2.2em] min-w-[2.2em] text-center text-black border-solid border-2 border-slate-600 pt-1 pb-1 rounded">
+        <%= letter %>
+      </div>
+      <% end %>
+    </div>
     """
   end
 
@@ -169,4 +174,9 @@ defmodule BreakdownWeb.GameLive do
       :white -> "text-black border-solid border-2 border-slate-600 pt-1 pb-1 rounded"
     end
   end
+
+  defp fill_five_chars(letters) when length(letters) < 5 do
+    fill_five_chars( [" "] ++  letters)
+  end
+  defp fill_five_chars(letters), do: Enum.reverse(letters)
 end
