@@ -16,8 +16,16 @@ defmodule BreakdownWeb.Components.Keyboard do
 
   def render(assigns) do
     ~H"""
-    <div class="grid grid-cols-10 gap-3 text-center font-bold" id={@id}>
-      <.letter :for={{letter, color} <- @keyboard_letters} letter={letter} color={color} />
+    <div class="font-bold">
+      <div class="flex flex-row mt-2 gap-1 w-full justify-center">
+        <.letter :for={{letter, color}  <- keyboard_qwert_row1(@keyboard_letters)} letter={letter} color={color} />
+      </div>
+      <div class="flex flex-row mt-2 gap-1 w-full justify-center">
+        <.letter :for={{letter, color}  <- keyboard_qwert_row2(@keyboard_letters)} letter={letter} color={color} />
+      </div>
+      <div class="flex flex-row mt-2 gap-1 w-full justify-center">
+        <.letter :for={{letter, color}  <- keyboard_qwert_row3(@keyboard_letters)} letter={letter} color={color} />
+      </div>
     </div>
     """
   end
@@ -35,10 +43,31 @@ defmodule BreakdownWeb.Components.Keyboard do
 
   defp color_class(color) do
     case color do
-      :gray -> "bg-gray-500 text-white pt-1 pb-1 rounded"
-      :yellow -> "bg-yellow-500 text-white pt-1 pb-1 rounded"
-      :green -> "bg-green-600 text-white pt-1 pb-1 rounded"
-      :white -> "text-black border-solid border-2 border-slate-600 pt-1 pb-1 rounded"
+      :gray   -> "basis-[9%] min-h-[2.2em] min-w-[2.2em] text-center bg-gray-500 text-white pt-1 pb-1 rounded"
+      :yellow -> "basis-[9%] min-h-[2.2em] min-w-[2.2em] text-center bg-yellow-500 text-white pt-1 pb-1 rounded"
+      :green  -> "basis-[9%] min-h-[2.2em] min-w-[2.2em] text-center bg-green-600 text-white pt-1 pb-1 rounded"
+      :white  -> "basis-[9%] min-h-[2.2em] min-w-[2.2em] text-center text-black border-solid border-2 border-slate-600 pt-1 pb-1 rounded"
     end
+  end
+
+  defp keyboard_qwert_row1(letters) do
+    ["q","w","e","r","t","y","u","i","o","p"]
+    |> keyboard_quert_reduce(letters)
+  end
+
+  defp keyboard_qwert_row2(letters) do
+    ["a","s","d","f","g","h","j","k","l"]
+    |> keyboard_quert_reduce(letters)
+  end
+
+  defp keyboard_qwert_row3(letters) do
+    ["z","x","c","v","b","n","m"]
+    |> keyboard_quert_reduce(letters)
+  end
+
+  defp keyboard_quert_reduce(order, letters) do
+    Enum.reduce(order, [], fn letter,acc ->
+      [ {letter , Map.get(letters, letter) } ] ++ acc
+      end) |> Enum.reverse()
   end
 end
